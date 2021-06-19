@@ -1,4 +1,4 @@
-from sqlite3 import Connection, Cursor
+from sqlite3 import Connection
 from hashlib import sha256
 
 
@@ -49,7 +49,7 @@ def check_credentials(db: Connection, username: str, password: str) -> bool:
 
 def add_post(db: Connection, uid: int, content: str):
     return db.execute("INSERT INTO posts (uid, content, date) VALUES (?, ?, CURRENT_TIMESTAMP)", (uid, content)).lastrowid
-    
+
 def add_reply(db: Connection, uid: int, content: str, reply_to: int):
     db.execute("INSERT INTO posts (uid, content, date, reply_to) VALUES (?, ?, CURRENT_TIMESTAMP, ?)", (uid, content, reply_to))
     return db.lastrowid
@@ -136,4 +136,3 @@ def get_post_response(db: Connection, post_id: int):
         , (post_id ,)
     ).fetchall()
     return {"responses": [dict(row) for row in responses]}
-

@@ -14,6 +14,6 @@ def err_500(error: HTTPError):
 
 def set_err_handler(app: Bottle):
     app.error_handler[500] = err_500
-    for c in HTTP_CODES.keys():
-        if c >= 400 and c < 500:
-            app.error_handler[c] = err_4xx
+    for code in HTTP_CODES.keys():
+        if code >= 400 and code < 500:
+            app.error_handler[code] = err_4xx

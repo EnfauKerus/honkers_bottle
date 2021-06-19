@@ -11,10 +11,10 @@ user = Bottle()
 def get_user(username, db):
     return sql.get_user(db, username)
 
-@user.get("/<username>/avatar", auth="_")   
+@user.get("/<username>/avatar", auth="_")
 def get_user_avatar(username, db):
     avatar = sql.get_avatar_by_username(db, username)
-    if avatar == None:
+    if avatar is None:
         return abort(404, "No avatar")
     response.content_type = "image/jpeg"
     return avatar
@@ -34,11 +34,8 @@ def post_avatar(username, db, auth):
         return {"size": len(avatar_bytes)}
     except UnidentifiedImageError:
         abort(400, "Invalid format")
-    
+
 @user.delete("/<username>/avatar", auth="_")
 def delete_avatar(username, db, auth):
     if username != auth["username"]: abort(403, "Forbidden")
     sql.del_avatar(db, auth["uid"])
-    
-
-
