@@ -6,9 +6,9 @@ from bottlejwt import JwtPlugin
 
 from utils import sql
 
-auth = Bottle()
+auth_subapp = Bottle()
 
-@auth.post("/login")
+@auth_subapp.post("/login")
 def login(db):
     username, password = request.json["username"], request.json["password"]
     if sql.check_credentials(db, username, password):
@@ -17,7 +17,7 @@ def login(db):
         return {"token": jwt}
     abort(401, "Username/password mismatch")
 
-@auth.post("/register")
+@auth_subapp.post("/register")
 def register(db):
     username, nickname, password = request.json["username"], request.json["nickname"], request.json["password"]
     if len(username) < 3:
@@ -29,7 +29,7 @@ def register(db):
     if not sql.add_user(db, username, nickname, password):
         abort(403, "Username already exists")
 
-@auth.route("/password", method="PATCH", auth="_")
+@auth_subapp.route("/password", method="PATCH", auth="_")
 def set_password(db, auth):
     password = request.json["password"]
     sql.set_password(db, auth["uid"], password)

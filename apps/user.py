@@ -1,8 +1,6 @@
-from sqlite3 import Connection
 from io import BytesIO
 
-from bottle import Bottle, Response, request, response, abort
-from bottlejwt import JwtPlugin
+from bottle import Bottle, request, response, abort
 from PIL import Image, UnidentifiedImageError
 
 from utils import sql

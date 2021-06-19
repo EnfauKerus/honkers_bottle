@@ -7,13 +7,13 @@ def get_config(db: Connection, name: str):
 
 def get_user(db: Connection, username: str) -> dict:
     user = db.execute("SELECT id, username, nickname FROM user WHERE username = ?", (username,)).fetchone()
-    if user==None: return None
+    if user is None: return None
     user_dict = dict(user)
     return user_dict
 
 def get_user_id(db: Connection, username: str) -> int:
     user = db.execute("SELECT id FROM user WHERE username = ?", (username,)).fetchone()
-    if user==None: return None
+    if user is None: return None
     return user["id"]
 
 def add_user(db: Connection, username: str, nickname: str, password: str):
@@ -110,7 +110,7 @@ def get_post(db: Connection, post_id: int):
         )
         , (post_id ,)
     ).fetchone()
-    if post == None: return None
+    if post is None: return None
     return dict(post)
 
 def pre_del_post_get_uid(db: Connection, post_id: int):
@@ -118,7 +118,7 @@ def pre_del_post_get_uid(db: Connection, post_id: int):
         "SELECT uid FROM posts WHERE id = ?"
         , (post_id ,)
     ).fetchone()
-    if uid == None: return None
+    if uid is None: return None
     return uid["uid"]
 
 def del_post_check_uid(db: Connection, post_id: int, uid: int) -> bool:
