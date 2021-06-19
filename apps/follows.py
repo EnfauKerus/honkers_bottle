@@ -1,22 +1,19 @@
-from sqlite3 import Connection
-
-from bottle import Bottle, request, abort
-from bottlejwt import JwtPlugin
+from bottle import Bottle, abort
 
 from utils import sql
 
 follows = Bottle()
 
-@follows.get("/following/<username>", auth="_")
-def get_following(username, db, auth):
+@follows.get("/following/<username>")
+def get_following(username, db):
     uid = sql.get_user_id(db, username)
     if uid:
         return sql.get_following(db, uid)
     else:
         abort(404, "No such user")
 
-@follows.get("/followers/<username>", auth="_")
-def get_followers(username, db, auth):
+@follows.get("/followers/<username>")
+def get_followers(username, db):
     uid = sql.get_user_id(db, username)
     if uid:
         return sql.get_followers(db, uid)
@@ -34,7 +31,6 @@ def add_follow(username, db, auth):
     if follows_uid:
         if not sql.add_follows(db, auth["uid"], follows_uid):
             abort(400, "Already followed")
-
     else:
         abort(404, "No such user")
 

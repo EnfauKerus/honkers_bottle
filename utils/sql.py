@@ -51,8 +51,7 @@ def add_post(db: Connection, uid: int, content: str):
     return db.execute("INSERT INTO posts (uid, content, date) VALUES (?, ?, CURRENT_TIMESTAMP)", (uid, content)).lastrowid
 
 def add_reply(db: Connection, uid: int, content: str, reply_to: int):
-    db.execute("INSERT INTO posts (uid, content, date, reply_to) VALUES (?, ?, CURRENT_TIMESTAMP, ?)", (uid, content, reply_to))
-    return db.lastrowid
+    return db.execute("INSERT INTO posts (uid, content, date, reply_to) VALUES (?, ?, CURRENT_TIMESTAMP, ?)", (uid, content, reply_to)).lastrowid
 
 def get_timeline(db: Connection, uid: int, offset: int=0):
     timeline = db.execute(
@@ -131,7 +130,7 @@ def get_post_response(db: Connection, post_id: int):
     responses = db.execute(
         (
         "SELECT user.username, user.nickname, posts.id, posts.uid, posts.content, posts.date FROM posts"
-        " INNER JOIN user ON user.id = posts.uid WHERE posts.response_to = ?"
+        " INNER JOIN user ON user.id = posts.uid WHERE posts.reply_to = ?"
         )
         , (post_id ,)
     ).fetchall()

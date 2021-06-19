@@ -21,7 +21,8 @@ def add_post(db, auth):
 @timeline.delete("/<post_id:int>", auth="_")
 def del_post(post_id, db, auth):
     uid = sql.pre_del_post_get_uid(db, post_id)
-    if uid != auth["uid"]: abort(403, "You do not own this post.")
+    if not uid: abort(404, "No such post")
+    if uid != auth["uid"]: abort(403, "You do not own this post")
     success = sql.del_post_check_uid(db, post_id, auth["uid"])
     if not success: abort(404, "No such post")
     return {"status": "Deleted"}
