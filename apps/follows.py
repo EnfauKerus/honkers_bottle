@@ -24,6 +24,14 @@ def get_followers(username, db):
 def get_follow(db, auth):
     return sql.get_following(db, auth["uid"])
 
+@follows.get("/follow/<username>", auth="_")
+def check_follow(username, db, auth):
+    follows_uid = sql.get_user_id(db, username)
+    if follows_uid:
+        if not sql.check_following(db, auth["uid"], follows_uid):
+            abort(400, "Not following")
+    else:
+        abort(404, "No such user")
 
 @follows.put("/follow/<username>", auth="_")
 def add_follow(username, db, auth):

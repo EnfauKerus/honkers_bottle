@@ -80,6 +80,10 @@ def get_user_timeline(db: Connection, username: str, offset: int=0):
     ).fetchall()
     return {"timeline": [dict(row) for row in timeline]}
 
+def check_following(db: Connection, uid: int, follows_uid: int):
+    following = db.execute("SELECT COUNT(*) AS follow_bool FROM follows WHERE uid = ? AND follows_uid = ?", (uid, follows_uid)).fetchone()
+    return following["follow_bool"]
+
 def get_following(db: Connection, uid: int):
     following = db.execute(
         (
@@ -157,10 +161,7 @@ def get_user_fav(db: Connection, uid: int):
 
 def check_user_fav(db: Connection, uid: int, post_id: int) -> bool:
     fav = db.execute("SELECT COUNT(*) AS fav_bool FROM fav WHERE uid = ? AND post_id = ?", (uid, post_id)).fetchone()
-    if fav:
-        return fav["fav_bool"]
-    else:
-        return False
+    return fav["fav_bool"]
 
 def add_user_fav(db: Connection, uid: int, post_id: int) -> bool:
     return db.execute("INSERT OR IGNORE INTO fav (uid, post_id) VALUES (?, ?)", (uid, post_id)).rowcount
