@@ -11,7 +11,7 @@ user = Bottle()
 def get_user(username, db):
     return sql.get_user(db, username)
 
-@user.get("/<username>/avatar", auth="_")
+@user.get("/<username>/avatar")
 def get_user_avatar(username, db):
     avatar = sql.get_avatar_by_username(db, username)
     if avatar is None:

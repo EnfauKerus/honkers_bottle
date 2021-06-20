@@ -110,7 +110,7 @@ def get_post(db: Connection, post_id: int):
     post = db.execute(
         (
         "SELECT user.username, user.nickname, posts.id, posts.uid, posts.content, posts.date FROM posts"
-        " INNER JOIN user ON user.id = posts.uid WHERE posts.id = ? ORDER BY posts.date ORDER BY posts.date DESC"
+        " INNER JOIN user ON user.id = posts.uid WHERE posts.id = ? ORDER BY posts.date DESC"
         )
         , (post_id ,)
     ).fetchone()
