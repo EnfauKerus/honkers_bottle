@@ -134,8 +134,11 @@ def del_post_check_uid(db: Connection, post_id: int, uid: int) -> bool:
 def get_post_response(db: Connection, post_id: int):
     responses = db.execute(
         (
-        "SELECT user.username, user.nickname, posts.id, posts.uid, posts.content, posts.date FROM posts"
-        " INNER JOIN user ON user.id = posts.uid WHERE posts.reply_to = ? ORDER BY posts.date DESC"
+        "SELECT user.username, user.nickname, posts.*, COUNT(replies.id) AS replies_count, COUNT(fav.uid) AS fav_count FFROM posts "
+        "INNER JOIN user ON user.id = posts.uid "
+        "LEFT JOIN fav ON fav.post_id = posts.id "
+        "LEFT JOIN posts AS replies ON replies.reply_to = posts.id "
+        "WHERE posts.reply_to = ? GROUP BY posts.id ORDER BY posts.date DESC"
         )
         , (post_id ,)
     ).fetchall()
