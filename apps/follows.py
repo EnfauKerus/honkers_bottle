@@ -33,7 +33,7 @@ def check_follow(username, db, auth):
     else:
         abort(404, "No such user")
 
-@follows.put("/follow/<username>", auth="_")
+@follows.post("/follow/<username>", auth="_")
 def add_follow(username, db, auth):
     follows_uid = sql.get_user_id(db, username)
     if follows_uid:
