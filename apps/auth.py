@@ -13,7 +13,7 @@ def login(db):
     username, password = request.json["username"], request.json["password"]
     if sql.check_credentials(db, username, password):
         user = sql.get_user(db, username)
-        jwt: str = JwtPlugin.encode({"uid": user["id"], "username": user["username"], "timestamp": datetime.now().isoformat()})
+        jwt: str = JwtPlugin.encode({"uid": user["id"], "username": user["username"], "nickname": user["nickname"], "timestamp": datetime.now().isoformat()})
         return {"token": jwt}
     abort(401, "Username/password mismatch")
 

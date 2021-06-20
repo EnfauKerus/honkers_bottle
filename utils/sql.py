@@ -105,7 +105,7 @@ def get_post(db: Connection, post_id: int):
     post = db.execute(
         (
         "SELECT user.username, user.nickname, posts.id, posts.uid, posts.content, posts.date FROM posts"
-        " INNER JOIN user ON user.id = posts.uid WHERE posts.id = ?"
+        " INNER JOIN user ON user.id = posts.uid WHERE posts.id = ? ORDER BY posts.date ORDER BY posts.date DESC"
         )
         , (post_id ,)
     ).fetchone()
@@ -130,8 +130,38 @@ def get_post_response(db: Connection, post_id: int):
     responses = db.execute(
         (
         "SELECT user.username, user.nickname, posts.id, posts.uid, posts.content, posts.date FROM posts"
-        " INNER JOIN user ON user.id = posts.uid WHERE posts.reply_to = ?"
+        " INNER JOIN user ON user.id = posts.uid WHERE posts.reply_to = ? ORDER BY posts.date DESC"
         )
         , (post_id ,)
     ).fetchall()
     return {"responses": [dict(row) for row in responses]}
+
+def get_user_fav(db: Connection, uid: int):
+    fav = db.execute(
+        (
+            "SELECT user.username, user.nickname, posts.* FROM fav INNER JOIN posts ON posts.id = fav.post_id "
+            "INNER JOIN user ON user.id = posts.uid "
+            "WHERE fav.uid = ? ORDER BY fav.timestamp DESC"
+        )
+        , (uid, )
+    ).fetchall()
+    return {"fav": [dict(row) for row in fav]}
+
+def add_user_fav(db: Connection, uid: int, post_id: int) -> bool:
+    return db.execute("INSERT OR IGNORE INTO fav (uid, post_id) VALUES (?, ?)", (uid, post_id)).rowcount
+
+def del_user_fav(db: Connection, uid: int, post_id: int) -> bool:
+    return db.execute("DELETE FROM fav WHERE uid = ? AND post_id = ?", (uid, post_id)).rowcount
+
+def get_user_fav_by_username(db: Connection, username: str):
+    fav = db.execute(
+        (
+            "SELECT poster.username, poster.nickname, posts.* FROM fav INNER JOIN posts ON posts.id = fav.post_id "
+            "INNER JOIN user ON user.id = fav.uid "
+            "INNER JOIN user AS poster ON poster.id = posts.uid "
+            "WHERE user.username = ? ORDER BY fav.timestamp DESC"
+        )
+        , (username, )
+    ).fetchall()
+    return {"fav": [dict(row) for row in fav]}
+
