@@ -56,10 +56,12 @@ def add_reply(db: Connection, uid: int, content: str, reply_to: int):
 def get_timeline(db: Connection, uid: int, offset: int=0):
     timeline = db.execute(
         (
-        "SELECT user.username, user.nickname, posts.* FROM follows"
-        " INNER JOIN user ON user.id = posts.uid"
-        " INNER JOIN posts ON follows.follows_uid = posts.uid"
-        " WHERE follows.uid = ? ORDER BY posts.date DESC LIMIT %d,50"
+        "SELECT user.username, user.nickname, posts.*, COUNT(replies.id) AS replies_count, COUNT(fav.uid) AS fav_count FROM follows "
+        "INNER JOIN user ON user.id = posts.uid "
+        "INNER JOIN posts ON follows.follows_uid = posts.uid "
+        "LEFT JOIN fav ON fav.post_id = posts.id "
+        "LEFT JOIN posts AS replies ON replies.reply_to = posts.id "
+        "WHERE follows.uid = ? GROUP BY posts.id ORDER BY posts.date DESC LIMIT %d,50"
         ) % offset
         , (uid ,)
     ).fetchall()
@@ -68,8 +70,11 @@ def get_timeline(db: Connection, uid: int, offset: int=0):
 def get_user_timeline(db: Connection, username: str, offset: int=0):
     timeline = db.execute(
         (
-        "SELECT user.username, user.nickname, posts.* FROM posts"
-        " INNER JOIN user ON user.id = posts.uid WHERE username = ? ORDER BY posts.date DESC LIMIT %d,50"
+        "SELECT user.username, user.nickname, posts.*, COUNT(replies.id) AS replies_count, COUNT(fav.uid) AS fav_count FROM posts"
+        " INNER JOIN user ON user.id = posts.uid "
+        "LEFT JOIN fav ON fav.post_id = posts.id "
+        "LEFT JOIN posts AS replies ON replies.reply_to = posts.id "
+        "WHERE username = ? GROUP BY posts.id ORDER BY posts.date DESC LIMIT %d,50"
         ) % offset
         , (username ,)
     ).fetchall()
