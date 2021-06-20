@@ -12,7 +12,7 @@ def get_user(username, db):
     return sql.get_user(db, username)
 
 @user.put("/nickname", auth="_")
-def set_nickname(username, db, auth):
+def set_nickname(db, auth):
     sql.set_nickname(db, auth["uid"], request.json["nickname"])
 
 @user.get("/<username>/avatar")
