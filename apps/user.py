@@ -11,6 +11,10 @@ user = Bottle()
 def get_user(username, db):
     return sql.get_user(db, username)
 
+@user.put("/nickname", auth="_")
+def set_nickname(username, db, auth):
+    sql.set_nickname(db, auth["uid"], request.json["nickname"])
+
 @user.get("/<username>/avatar")
 def get_user_avatar(username, db):
     avatar = sql.get_avatar_by_username(db, username)

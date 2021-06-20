@@ -180,4 +180,3 @@ def get_user_fav_by_username(db: Connection, username: str):
         , (username, )
     ).fetchall()
     return {"fav": [dict(row) for row in fav]}
-
