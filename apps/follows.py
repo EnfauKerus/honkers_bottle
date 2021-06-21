@@ -46,6 +46,8 @@ def add_follow(username, db, auth):
 def del_follow(username, db, auth):
     follows_uid = sql.get_user_id(db, username)
     if follows_uid:
+        if follows_uid == auth["uid"]:
+            abort(400, "Can't unfollow yourself")
         if not sql.del_follows(db, auth["uid"], follows_uid):
             abort(400, "Already unfollowed")
     else:

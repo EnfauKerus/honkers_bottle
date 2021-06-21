@@ -19,7 +19,7 @@ def get_user_id(db: Connection, username: str) -> int:
 def add_user(db: Connection, username: str, nickname: str, password: str):
     password_salt = get_config(db, "password_salt")
     password_hash = sha256((password + password_salt).encode()).hexdigest()
-    return db.execute("INSERT OR IGNORE INTO user (username, nickname, password_hash) VALUES (?, ?, ?)", (username, nickname, password_hash)).rowcount
+    return db.execute("INSERT OR IGNORE INTO user (username, nickname, password_hash) VALUES (?, ?, ?)", (username, nickname, password_hash)).lastrowid
 
 def set_password(db: Connection, uid: int, password: str):
     password_salt = get_config(db, "password_salt")

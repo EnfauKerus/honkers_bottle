@@ -26,8 +26,11 @@ def register(db):
         abort(400, "Username must start with alphabet character or underline (_)")
     if not re.match(r"[A-Za-z]\w+", username):
         abort(400, "Username must only contain alphanumeric character and underline (_)")
-    if not sql.add_user(db, username, nickname, password):
+    uid = sql.add_user(db, username, nickname, password)
+    if not uid:
         abort(403, "Username already exists")
+    sql.add_follows(db, uid, uid)
+
 
 @auth_subapp.route("/password", method="PATCH", auth="_")
 def set_password(db, auth):
